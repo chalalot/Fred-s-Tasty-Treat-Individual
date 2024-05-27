@@ -118,7 +118,7 @@ void Machine::purchaseMeal() {
   while (run) {
     if (priceAsCents > 0) {
       // If the user hasn't fully paid for the item
-      std::cout << "You still need to give us: $ " << (float)priceAsCents / 100
+      std::cout << "You still need to give us: $ " << "\033[33m" << (float)priceAsCents / 100 << "\033[0m"
                 << ": ";
     }
 
@@ -222,9 +222,9 @@ void Machine::purchaseMeal() {
     for (int change : changes) {
       // Print the denomination
       if (change < 100) {
-        std::cout << change << "c ";
+        std::cout << "\033[33m" << change << "\033[0m" << "c ";
       } else {
-        std::cout << "$" << change / 100 << " ";
+        std::cout << "$" << "\033[33m" << change / 100 << "\033[0m" << " ";
       }
     }
   }
