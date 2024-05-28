@@ -73,6 +73,7 @@ Node::Node() {
   // Create a new empty Node with data and next points to null
   this->data = nullptr;
   this->next = nullptr;
+  this->previous = nullptr;
 };
 
 Node::~Node() {

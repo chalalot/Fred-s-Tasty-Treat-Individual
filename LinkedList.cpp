@@ -6,6 +6,7 @@
 LinkedList::LinkedList() {
   this->head = nullptr;
   this->count = 0;
+  this->tail = nullptr;
 }
 
 LinkedList::~LinkedList() {
@@ -20,14 +21,14 @@ LinkedList::~LinkedList() {
 void LinkedList::append(Node *node) {
   if (!this->head) {
     this->head = node;
+    this->tail = node;
   } else {
-    Node *current = this->head;
-    while (current->next) {
-      current = current->next;
-    }
-    current->next = node;
+    this->tail->next = node;
+    node->previous = this->tail;
+    this->tail = node;
   }
   this->count++;
+  node->next = nullptr;
 }
 
 Node *LinkedList::getFirst() { return this->head; }
@@ -46,28 +47,37 @@ Node *LinkedList::getById(std::string id) {
 }
 
 void LinkedList::remove(std::string id) {
-  Node *current = this->head;
-  Node *previous = nullptr;
-
+  Node* current = this->head;
   // Traverse the list to find the node that matches the ID
   while (current != nullptr && current->data->id != id) {
-    previous = current;
-    current = current->next;
+      current = current->next;
   }
 
   // If the node is found
   if (current != nullptr) {
-    // If the node found is the head of the LinkedList
-    if (previous == nullptr) {
-      // Then set the next Node as the new head
-      head = current->next;
-    } else {
-      // If not, then redirect the pointer of the previous Node to skip a Node
-      previous->next = current->next;
-    }
-
-    delete current;
-    this->count--;
+      // If the node found is the head of the LinkedList
+      if (current == head) {
+          head = current->next;
+          if (head != nullptr) {
+              head->previous = nullptr;
+          }
+      } else if (current == tail) {
+          // If the node found is the tail of the LinkedList
+          tail = current->previous;
+          if (tail != nullptr) {
+              tail->next = nullptr;
+          }
+      } else {
+          // If the node is in the middle
+          current->previous->next = current->next;
+          current->next->previous = current->previous;
+      } 
+      // If the list becomes empty, update the tail
+      if (head == nullptr) {
+          tail = nullptr;
+      }
+      delete current;
+      this->count--;
   }
 }
 

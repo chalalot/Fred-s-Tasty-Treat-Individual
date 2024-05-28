@@ -111,6 +111,7 @@ public:
   FoodItem *data;
   // pointer to the next node in the list
   Node *next;
+  Node *previous;
 };
 
 #endif // NODE_H

@@ -32,7 +32,7 @@ public:
 private:
   // the beginning of the list
   Node *head;
-
+  Node *tail;
   // how many nodes are there in the list?
   unsigned count;
 };
