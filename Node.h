@@ -61,6 +61,8 @@ public:
   // the unique id for this food item
   std::string id;
 
+  std::string category;
+
   // the name of this food item
   std::string name;
 
@@ -74,14 +76,17 @@ public:
   unsigned on_hand;
 
   // For now, on_hand takes the default value
-  FoodItem(std::string id, std::string name, std::string description,
+  FoodItem(std::string id, std::string category, std::string name, std::string description,
            Price price);
 
   /*
    * Check if a string is in correct format
    */
   bool static isValidIdFormat(const std::string &id);
-
+  /*
+   * Check if a string is in correct format of category
+   */
+  bool static isValidCategory(const std::string &category);
   /*
    * Return a valid ID from an integer
    */

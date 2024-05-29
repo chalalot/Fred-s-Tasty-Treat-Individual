@@ -50,3 +50,17 @@ bool TwoDimensionLinkedList::isDistinct(std::string name) {
 LinkedList *TwoDimensionLinkedList::getFirst() {
     return this->head;
 };
+
+int TwoDimensionLinkedList::getNextId() {
+  int largestId = 0;
+  LinkedList *currentMealGroup = this->getFirst();
+  // Traverse until the end of the LinkedList
+  while (currentMealGroup != nullptr) {
+    int largestFound = currentMealGroup->getNextId();
+    if (largestFound > largestId) {
+      largestId = largestFound;
+    }
+    currentMealGroup = currentMealGroup->next;
+  }
+  return largestId;
+}

@@ -24,10 +24,11 @@ bool Price::isValidPrice(std::string price) {
   return result;
 }
 
-FoodItem::FoodItem(std::string id, std::string name, std::string description,
+FoodItem::FoodItem(std::string id, std::string category, std::string name, std::string description,
                    Price price) {
   this->id = id;
   this->name = name;
+  this->category = category;
   this->description = description;
   this->price = price;
   this->on_hand = DEFAULT_FOOD_STOCK_LEVEL;
@@ -39,6 +40,10 @@ bool FoodItem::isValidIdFormat(const std::string &id) {
 
   // Check if the string matches the pattern
   return std::regex_match(id, std::regex(pattern));
+}
+bool FoodItem::isValidCategory(const std::string &category) {
+  //implement later
+  return true;
 }
 
 bool FoodItem::isValidName(const std::string &name) {

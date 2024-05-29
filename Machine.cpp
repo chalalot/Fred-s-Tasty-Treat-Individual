@@ -39,7 +39,7 @@ void Machine::start() {
     } else if (input == "2") {
       this->purchaseMeal();
     } else if (input == "3") {
-      // this->data->save();
+      this->data->save();
       run = false;
     } else if (input == "4") {
       this->addFood();
@@ -81,7 +81,16 @@ void Machine::purchaseMeal() {
       prompt = false;
     } else {
       // get the selected meal by ID
-      // meal = this->data->meals->getById(mealID);
+      bool found = false;
+      LinkedList *currentMealGroup = this->data->meals_group->getFirst();
+      while (currentMealGroup != nullptr && !found) {
+        meal = currentMealGroup->getById(mealID);
+        if (meal != nullptr) {
+          found = true;
+        }  
+        currentMealGroup = currentMealGroup->next;
+      }
+      
       // check in-stock conditions
       if (meal && meal->data->on_hand > 0 && prompt) {
         run = true;
@@ -232,8 +241,6 @@ void Machine::purchaseMeal() {
 
 void Machine::displayMeals() {
   LinkedList *currentMealGroup = this->data->meals_group->getFirst();
-  
-  
   while (currentMealGroup != nullptr) {
     currentMealGroup->sortByAlpha();
     Node *currentMeal = currentMealGroup->getFirst();
@@ -251,8 +258,6 @@ void Machine::displayMeals() {
         i++) { // Accounting for the length of string ID
       std::cout << EMPTY_SPACE;
     }
-    
-
     std::cout << SEPARATOR << "Name";
     for (int i = 0; i < NAMELEN - 4; i++) {
       std::cout << EMPTY_SPACE;
@@ -366,22 +371,41 @@ void Machine::displayBalance() {
 }
 
 void Machine::addFood() {
-  // std::string mealID = FoodItem::constructID(this->data->meals->getNextId());
+  std::string mealID = FoodItem::constructID(this->data->meals_group->getNextId());
+  
+  std::string itemCat = "";
   std::string itemName = "";
   std::string itemDesc = "";
   std::string itemPrice = "";
 
   // booleans to manage the flow
+  bool cat = false;
   bool name = false;
   bool desc = false;
   bool price = false;
   bool success = false;
 
-  // if (mealID.size() == IDLEN) {
-  //   name = true;
-  //   std::cout << "This new meal item will have the Item ID of " << mealID
-  //             << ".\n";
-  // }
+  if (mealID.size() == IDLEN) {
+    cat = true;
+    std::cout << "This new meal item will have the Item ID of " << mealID
+              << ".\n";
+  }
+  while (cat) {
+    std::cout << "Enter the item category: ";
+    itemCat = Helper::readInput();
+    if (std::cin.eof()) {
+      std::cout << "Cancel add" << "\n";
+      std::cin.clear();
+      cat = false;
+    }
+
+    if (cat && !FoodItem::isValidName(itemCat)) {
+      std::cout << "Invalid name" << "\n";
+    } else if (cat && FoodItem::isValidName(itemCat)) {
+      cat = false;
+      name = true;
+    }
+  }
 
   while (name) {
     std::cout << "Enter the item name: ";
@@ -437,39 +461,65 @@ void Machine::addFood() {
   }
 
   // Create FoodItem obj and assign it to LinkedList
-  // if (success) {
-  //   std::vector<std::string> prices = {};
-  //   Helper::splitString(itemPrice, prices, ".");
-  //   Price price = Price();
-  //   price.dollars = std::stoi(prices[0]);
-  //   price.cents = std::stoi(prices[1]);
+  if (success) {
+    std::vector<std::string> prices = {};
+    Helper::splitString(itemPrice, prices, ".");
+    Price price = Price();
+    price.dollars = std::stoi(prices[0]);
+    price.cents = std::stoi(prices[1]);
 
-  //   FoodItem *newMeal = new FoodItem(mealID, itemName, itemDesc, price);
-  //   Node *newNode = new Node();
-  //   newNode->data = newMeal;
-  //   this->data->meals->append(newNode);
-
-  //   std::cout << "This item \"" << itemName << " - " << itemDesc << "\""
-  //             << "has now been added to the food menu" << "\n";
-  // }
+    FoodItem *newMeal = new FoodItem(mealID, itemCat, itemName, itemDesc, price);
+    Node *newNode = new Node();
+    newNode->data = newMeal;
+    LinkedList *currentMealGroup = this->data->meals_group->getFirst();
+    bool append = false;
+    while (!append) {
+      if (currentMealGroup != nullptr) {
+        if (itemCat == currentMealGroup->name) {
+          currentMealGroup->append(newNode);
+          append = true;
+        } else {
+          currentMealGroup = currentMealGroup->next;
+        }
+      } else {
+        LinkedList *newCat = new LinkedList();
+        newCat->name = itemCat;
+        this->data->meals_group->append(newCat);
+        newCat->append(newNode);
+        append = true;
+      }
+    }
+    
+    std::cout << "This item \"" << itemName << " - " << itemDesc << "\""
+              << "has now been added to the food menu" << "\n";
+  }
 }
 
 void Machine::removeFood() {
-  // std::string input = Helper::readInput();
+  std::string input = Helper::readInput();
 
-  // if (input.empty()) {
-  //   std::cout << "Cancel delete" << "\n";
-  // } else {
-
-  //   Node *meal = this->data->meals->getById(input);
-
-  //   if (meal) {
-  //     std::cout << "\"" << meal->data->id << " - " << meal->data->name << " - "
-  //               << meal->data->description << "\""
-  //               << "has been removed from the system" << "\n";
-  //     this->data->meals->remove(input);
-  //   }
-  // }
+  if (input.empty()) {
+    std::cout << "Cancel delete" << "\n";
+  } else {
+    LinkedList *currentMealGroup = this->data->meals_group->getFirst();
+    bool found = false;
+    Node *meal = nullptr;
+    while (!found && currentMealGroup != nullptr) {
+      if (currentMealGroup->getById(input)) {
+        meal = currentMealGroup->getById(input);
+        std::cout << "\"" << meal->data->id << " - " << meal->data->name << " - "
+                << meal->data->description << "\""
+                << "has been removed from the system" << "\n";
+        currentMealGroup->remove(input);
+        found = true;
+      } else {
+        currentMealGroup = currentMealGroup->next;
+      }
+    }
+    if (found == false) {
+      std::cout << "Meal not found";
+    }
+  }
 }
 
 void Machine::save() {}
