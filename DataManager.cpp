@@ -9,7 +9,7 @@
 
 DataManager::DataManager(std::string mealFileName, std::string moneyFileName) {
   // Create an empty LinkedList and balance
-  this->meals = new LinkedList();
+  this->meals_group = new TwoDimensionLinkedList();
   this->balance = new Balance();
 
   this->mealFile = mealFileName;
@@ -28,27 +28,37 @@ DataManager::DataManager(std::string mealFileName, std::string moneyFileName) {
     std::vector<std::string> tokens = {};
     std::vector<std::string> prices = {};
     Helper::splitString(line, tokens, "|");
-
-    if (tokens.size() == 4 && tokens[1].size() <= NAMELEN &&
-        tokens[2].size() <= DESCLEN && FoodItem::isValidIdFormat(tokens[0]) &&
-        Price::isValidPrice(tokens[3]) && !this->meals->getById(tokens[0])) {
-      // Slit the price into its integer and fractional part to create Price
-      // object
-      Helper::splitString(Helper::floatToString(std::stof(tokens[3]), 2),
-                          prices, ".");
-      Price price = Price();
-      price.dollars = std::stoi(prices[0]);
-      price.cents = std::stoi(prices[1]);
-
-      // Create FoodItem object
-      FoodItem *item = new FoodItem(tokens[0], tokens[1], tokens[2], price);
-
-      // Create node
-      Node *node = new Node();
-      node->data = item;
-
-      this->meals->append(node);
+    if (!meals_group->isDistinct(tokens[1])) {
+        LinkedList *meals = new LinkedList();
+        meals->name = tokens[1];
+        meals_group->append(meals);
     }
+  
+    LinkedList *currentMealGroup = meals_group->getFirst();
+    while (currentMealGroup != nullptr) {
+      if (currentMealGroup->name == tokens[1]) {
+        if (tokens.size() == 5 && tokens[2].size() <= NAMELEN &&
+          tokens[3].size() <= DESCLEN && FoodItem::isValidIdFormat(tokens[0]) &&
+          Price::isValidPrice(tokens[4]) && !currentMealGroup->getById(tokens[0])) {
+            // Slit the price into its integer and fractional part to create Price
+            // object
+            Helper::splitString(Helper::floatToString(std::stof(tokens[4]), 2),
+                                prices, ".");
+            Price price = Price();
+            price.dollars = std::stoi(prices[0]);
+            price.cents = std::stoi(prices[1]);
+            // Create FoodItem object
+            FoodItem *item = new FoodItem(tokens[0], tokens[2], tokens[3], price);
+            // Create node
+            Node *node = new Node();
+            node->data = item;
+            currentMealGroup->append(node);
+        }
+      }
+      currentMealGroup = currentMealGroup->next;
+    }
+    
+    
   }
 
   while (std::getline(moneyFile, line)) {
@@ -72,34 +82,34 @@ DataManager::DataManager(std::string mealFileName, std::string moneyFileName) {
   moneyFile.close();
 }
 // Save the file
-void DataManager::save() {
-  std::ofstream mealFile(this->mealFile);
-  std::ofstream coinFile(this->moneyFile);
+// void DataManager::save() {
+//   std::ofstream mealFile(this->mealFile);
+//   std::ofstream coinFile(this->moneyFile);
 
-  if (!mealFile.is_open()) {
-    std::cerr << "Failed to open file: " << this->mealFile << std::endl;
-    return;
-  }
+//   if (!mealFile.is_open()) {
+//     std::cerr << "Failed to open file: " << this->mealFile << std::endl;
+//     return;
+//   }
 
-  std::string line;
-  Node *current = this->meals->getFirst();
-  while (current) {
-    mealFile << current->data->id << SEPARATOR << current->data->name << "|"
-             << current->data->description << SEPARATOR
-             << Helper::floatToString(current->data->price.value(), 2) << "\n";
+//   std::string line;
+//   Node *current = this->meals->getFirst();
+//   while (current) {
+//     mealFile << current->data->id << SEPARATOR << current->data->name << "|"
+//              << current->data->description << SEPARATOR
+//              << Helper::floatToString(current->data->price.value(), 2) << "\n";
 
-    current = current->next;
-  }
+//     current = current->next;
+//   }
 
-  for (Coin coin : this->balance->balance) {
-    coinFile << coin.denom << DELIM << coin.count << "\n";
-  }
+//   for (Coin coin : this->balance->balance) {
+//     coinFile << coin.denom << DELIM << coin.count << "\n";
+//   }
 
-  mealFile.close();
-  coinFile.close();
-};
+//   mealFile.close();
+//   coinFile.close();
+// };
 
 DataManager::~DataManager() {
-  delete this->meals;
+  delete this->meals_group;
   delete this->balance;
 }

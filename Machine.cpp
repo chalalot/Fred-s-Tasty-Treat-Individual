@@ -39,7 +39,7 @@ void Machine::start() {
     } else if (input == "2") {
       this->purchaseMeal();
     } else if (input == "3") {
-      this->data->save();
+      // this->data->save();
       run = false;
     } else if (input == "4") {
       this->addFood();
@@ -81,7 +81,7 @@ void Machine::purchaseMeal() {
       prompt = false;
     } else {
       // get the selected meal by ID
-      meal = this->data->meals->getById(mealID);
+      // meal = this->data->meals->getById(mealID);
       // check in-stock conditions
       if (meal && meal->data->on_hand > 0 && prompt) {
         run = true;
@@ -231,49 +231,54 @@ void Machine::purchaseMeal() {
 }
 
 void Machine::displayMeals() {
-  this->data->meals->sortByAlpha();
-  Node *currentMeal = this->data->meals->getFirst();
+  LinkedList *currentMealGroup = this->data->meals_group->getFirst();
+   // Display first row
+  // std::cout << "ID";
+  // for (int i = 0; i < IDLEN - 2;
+  //      i++) { // Accounting for the length of string ID
+  //   std::cout << EMPTY_SPACE;
+  // }
+  while (currentMealGroup != nullptr) {
+    std::cout << currentMealGroup->name << "\n";
+    Node *currentMeal = currentMealGroup->getFirst();
+    while (currentMeal != nullptr) {
+      std::cout << currentMeal->data->id << SEPARATOR << currentMeal->data->name;
+      for (int i = 0; i < NAMELEN - (int)currentMeal->data->name.size(); i++) {
+        std::cout << EMPTY_SPACE;
+      }
+      std::cout << SEPARATOR << MONEY_SYMBOL;
 
-  // Display first row
-  std::cout << "ID";
-  for (int i = 0; i < IDLEN - 2;
-       i++) { // Accounting for the length of string ID
-    std::cout << EMPTY_SPACE;
+      std::cout << Helper::formatFloatToString(currentMeal->data->price.value(),
+                                              10)
+                << "\n";
+      currentMeal = currentMeal->next;
+    }
+    currentMealGroup = currentMealGroup->next;
   }
+  // this->data->meals_group->sortByAlpha();
 
   // Get the maximum size of PRICELEN
-  int longestInteger =
-      Helper::getLongestIntegerPart(this->data->meals->getPrices());
-  int pricelen = longestInteger + 3;
+  // int longestInteger =
+  //     Helper::getLongestIntegerPart(this->data->meals->getPrices());
+  // int pricelen = longestInteger + 3;
 
-  std::cout << SEPARATOR << "Name";
-  for (int i = 0; i < NAMELEN - 4; i++) {
-    std::cout << EMPTY_SPACE;
-  }
-  std::cout << SEPARATOR << "Length";
-  for (int i = 0; i < pricelen - 6; i++) {
-    std::cout << EMPTY_SPACE;
-  }
+  // std::cout << SEPARATOR << "Name";
+  // for (int i = 0; i < NAMELEN - 4; i++) {
+  //   std::cout << EMPTY_SPACE;
+  // }
+  // std::cout << SEPARATOR << "Length";
+  // for (int i = 0; i < pricelen - 6; i++) {
+  //   std::cout << EMPTY_SPACE;
+  // }
 
-  std::cout << "\n";
+  // std::cout << "\n";
   // Display separator line
-  for (int i = 0; i < IDLEN + NAMELEN + pricelen + 3 + SEPARATOR_NUM; i++) {
-    std::cout << LINE;
-  }
-  std::cout << "\n";
+  // for (int i = 0; i < IDLEN + NAMELEN + pricelen + 3 + SEPARATOR_NUM; i++) {
+  //   std::cout << LINE;
+  // }
+  // std::cout << "\n";
 
-  while (currentMeal != nullptr) {
-    std::cout << currentMeal->data->id << SEPARATOR << currentMeal->data->name;
-    for (int i = 0; i < NAMELEN - (int)currentMeal->data->name.size(); i++) {
-      std::cout << EMPTY_SPACE;
-    }
-    std::cout << SEPARATOR << MONEY_SYMBOL;
-
-    std::cout << Helper::formatFloatToString(currentMeal->data->price.value(),
-                                             longestInteger)
-              << "\n";
-    currentMeal = currentMeal->next;
-  }
+  
 }
 
 void Machine::displayBalance() {
@@ -359,7 +364,7 @@ void Machine::displayBalance() {
 }
 
 void Machine::addFood() {
-  std::string mealID = FoodItem::constructID(this->data->meals->getNextId());
+  // std::string mealID = FoodItem::constructID(this->data->meals->getNextId());
   std::string itemName = "";
   std::string itemDesc = "";
   std::string itemPrice = "";
@@ -370,11 +375,11 @@ void Machine::addFood() {
   bool price = false;
   bool success = false;
 
-  if (mealID.size() == IDLEN) {
-    name = true;
-    std::cout << "This new meal item will have the Item ID of " << mealID
-              << ".\n";
-  }
+  // if (mealID.size() == IDLEN) {
+  //   name = true;
+  //   std::cout << "This new meal item will have the Item ID of " << mealID
+  //             << ".\n";
+  // }
 
   while (name) {
     std::cout << "Enter the item name: ";
@@ -430,39 +435,39 @@ void Machine::addFood() {
   }
 
   // Create FoodItem obj and assign it to LinkedList
-  if (success) {
-    std::vector<std::string> prices = {};
-    Helper::splitString(itemPrice, prices, ".");
-    Price price = Price();
-    price.dollars = std::stoi(prices[0]);
-    price.cents = std::stoi(prices[1]);
+  // if (success) {
+  //   std::vector<std::string> prices = {};
+  //   Helper::splitString(itemPrice, prices, ".");
+  //   Price price = Price();
+  //   price.dollars = std::stoi(prices[0]);
+  //   price.cents = std::stoi(prices[1]);
 
-    FoodItem *newMeal = new FoodItem(mealID, itemName, itemDesc, price);
-    Node *newNode = new Node();
-    newNode->data = newMeal;
-    this->data->meals->append(newNode);
+  //   FoodItem *newMeal = new FoodItem(mealID, itemName, itemDesc, price);
+  //   Node *newNode = new Node();
+  //   newNode->data = newMeal;
+  //   this->data->meals->append(newNode);
 
-    std::cout << "This item \"" << itemName << " - " << itemDesc << "\""
-              << "has now been added to the food menu" << "\n";
-  }
+  //   std::cout << "This item \"" << itemName << " - " << itemDesc << "\""
+  //             << "has now been added to the food menu" << "\n";
+  // }
 }
 
 void Machine::removeFood() {
-  std::string input = Helper::readInput();
+  // std::string input = Helper::readInput();
 
-  if (input.empty()) {
-    std::cout << "Cancel delete" << "\n";
-  } else {
+  // if (input.empty()) {
+  //   std::cout << "Cancel delete" << "\n";
+  // } else {
 
-    Node *meal = this->data->meals->getById(input);
+  //   Node *meal = this->data->meals->getById(input);
 
-    if (meal) {
-      std::cout << "\"" << meal->data->id << " - " << meal->data->name << " - "
-                << meal->data->description << "\""
-                << "has been removed from the system" << "\n";
-      this->data->meals->remove(input);
-    }
-  }
+  //   if (meal) {
+  //     std::cout << "\"" << meal->data->id << " - " << meal->data->name << " - "
+  //               << meal->data->description << "\""
+  //               << "has been removed from the system" << "\n";
+  //     this->data->meals->remove(input);
+  //   }
+  // }
 }
 
 void Machine::save() {}

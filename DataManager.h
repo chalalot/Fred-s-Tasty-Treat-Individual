@@ -3,6 +3,7 @@
 
 #include "Balance.h"
 #include "LinkedList.h"
+#include "TwoDimensionLinkedList.h"
 #include <array>
 
 #define EMPTY_SPACE " "
@@ -30,7 +31,7 @@ public:
    * Read the money data file and meal data file into meals and balance
    * This method assumes mealFile and moneyFile are valid
    */
-  LinkedList *meals;
+  TwoDimensionLinkedList *meals_group;
   Balance *balance;
   // Hold the name of the files so we can save it
   std::string mealFile;

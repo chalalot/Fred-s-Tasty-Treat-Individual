@@ -5,6 +5,9 @@
 
 class LinkedList {
 public:
+  LinkedList *next;
+  LinkedList *previous;
+  std::string name;
   LinkedList();
   ~LinkedList();
 
@@ -33,6 +36,7 @@ private:
   // the beginning of the list
   Node *head;
   Node *tail;
+  
   // how many nodes are there in the list?
   unsigned count;
 };
