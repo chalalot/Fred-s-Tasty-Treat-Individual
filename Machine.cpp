@@ -232,15 +232,41 @@ void Machine::purchaseMeal() {
 
 void Machine::displayMeals() {
   LinkedList *currentMealGroup = this->data->meals_group->getFirst();
-   // Display first row
-  // std::cout << "ID";
-  // for (int i = 0; i < IDLEN - 2;
-  //      i++) { // Accounting for the length of string ID
-  //   std::cout << EMPTY_SPACE;
-  // }
+  
+  
   while (currentMealGroup != nullptr) {
-    std::cout << currentMealGroup->name << "\n";
+    currentMealGroup->sortByAlpha();
     Node *currentMeal = currentMealGroup->getFirst();
+    // Get the maximum size of PRICELEN
+    int longestInteger =
+        Helper::getLongestIntegerPart(currentMealGroup->getPrices());
+    int pricelen = longestInteger + 3;
+    //  Display first row
+    for (int i = 0; i < (IDLEN + NAMELEN + pricelen + 3 + SEPARATOR_NUM)/2 - 3; i++) {
+      std::cout << EMPTY_SPACE;
+    }
+    std::cout << currentMealGroup->name << "\n";
+    std::cout << "ID";
+    for (int i = 0; i < IDLEN - 2;
+        i++) { // Accounting for the length of string ID
+      std::cout << EMPTY_SPACE;
+    }
+    
+
+    std::cout << SEPARATOR << "Name";
+    for (int i = 0; i < NAMELEN - 4; i++) {
+      std::cout << EMPTY_SPACE;
+    }
+    std::cout << SEPARATOR << "Length";
+    for (int i = 0; i < pricelen - 6; i++) {
+      std::cout << EMPTY_SPACE;
+    }
+    std::cout << "\n";
+    // Display separator line
+    for (int i = 0; i < IDLEN + NAMELEN + pricelen + 3 + SEPARATOR_NUM; i++) {
+      std::cout << LINE;
+    }
+    std::cout << "\n";
     while (currentMeal != nullptr) {
       std::cout << currentMeal->data->id << SEPARATOR << currentMeal->data->name;
       for (int i = 0; i < NAMELEN - (int)currentMeal->data->name.size(); i++) {
@@ -249,36 +275,12 @@ void Machine::displayMeals() {
       std::cout << SEPARATOR << MONEY_SYMBOL;
 
       std::cout << Helper::formatFloatToString(currentMeal->data->price.value(),
-                                              10)
+                                              longestInteger)
                 << "\n";
       currentMeal = currentMeal->next;
     }
     currentMealGroup = currentMealGroup->next;
   }
-  // this->data->meals_group->sortByAlpha();
-
-  // Get the maximum size of PRICELEN
-  // int longestInteger =
-  //     Helper::getLongestIntegerPart(this->data->meals->getPrices());
-  // int pricelen = longestInteger + 3;
-
-  // std::cout << SEPARATOR << "Name";
-  // for (int i = 0; i < NAMELEN - 4; i++) {
-  //   std::cout << EMPTY_SPACE;
-  // }
-  // std::cout << SEPARATOR << "Length";
-  // for (int i = 0; i < pricelen - 6; i++) {
-  //   std::cout << EMPTY_SPACE;
-  // }
-
-  // std::cout << "\n";
-  // Display separator line
-  // for (int i = 0; i < IDLEN + NAMELEN + pricelen + 3 + SEPARATOR_NUM; i++) {
-  //   std::cout << LINE;
-  // }
-  // std::cout << "\n";
-
-  
 }
 
 void Machine::displayBalance() {

@@ -50,7 +50,3 @@ bool TwoDimensionLinkedList::isDistinct(std::string name) {
 LinkedList *TwoDimensionLinkedList::getFirst() {
     return this->head;
 };
-
-void TwoDimensionLinkedList::sortByAlpha() {
-    
-}
