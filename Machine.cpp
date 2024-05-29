@@ -7,9 +7,14 @@
 #include <string>
 #include <vector>
 
-Machine::Machine(std::string mealFileName, std::string moneyFileName) {
+Machine::Machine(std::string mealFileName, std::string moneyFileName, bool useColor, bool useTwoDimension) {
   DataManager *data = new DataManager(mealFileName, moneyFileName);
   this->data = data;
+  if (useColor) {
+    this->color = "\033[33m";
+  } else {
+    this->color = "";
+  }
 }
 
 Machine::~Machine() {
@@ -99,8 +104,8 @@ void Machine::purchaseMeal() {
         // print out messages
         std::cout << "You have selected \"" << meal->data->name << " - "
                   << meal->data->description << "\""
-                  << ". This will cost you $ " << (float)priceAsCents / 100
-                  << " .";
+                  << ". This will cost you $ " << this->color << (float)priceAsCents / 100 << RESET_COLOR
+                  << ".\n";
         std::cout << "Please hand over the money - type in the value of each "
                      "note/coin in cents."
                   << "\n";
@@ -127,7 +132,7 @@ void Machine::purchaseMeal() {
   while (run) {
     if (priceAsCents > 0) {
       // If the user hasn't fully paid for the item
-      std::cout << "You still need to give us: $ " << "\033[33m" << (float)priceAsCents / 100 << "\033[0m"
+      std::cout << "You still need to give us: $ " << this->color << (float)priceAsCents / 100 << RESET_COLOR
                 << ": ";
     }
 
@@ -231,9 +236,9 @@ void Machine::purchaseMeal() {
     for (int change : changes) {
       // Print the denomination
       if (change < 100) {
-        std::cout << "\033[33m" << change << "\033[0m" << "c ";
+        std::cout << this->color << change << RESET_COLOR << "c ";
       } else {
-        std::cout << "$" << "\033[33m" << change / 100 << "\033[0m" << " ";
+        std::cout << "$" << this->color << change / 100 << RESET_COLOR << " ";
       }
     }
   }

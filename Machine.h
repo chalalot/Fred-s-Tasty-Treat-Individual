@@ -4,13 +4,13 @@
 #include "DataManager.h"
 #include "LinkedList.h"
 #include <string>
-
+#define RESET_COLOR "\033[0m"
 // This class defines the interface and commands of ftt
 class Machine {
 private:
   // A pointer to an object to handle reading / saving / containing data
   DataManager *data;
-
+  std::string color;
   /*
    * Purchase a meal given an id
    */
@@ -49,7 +49,7 @@ private:
 
 public:
   // Initialize and destroy member variables
-  Machine(std::string mealFile, std::string moneyFile);
+  Machine(std::string mealFile, std::string moneyFile, bool useColor, bool useTwoDimension);
   ~Machine();
 
   /*
