@@ -49,7 +49,7 @@ private:
 
 public:
   // Initialize and destroy member variables
-  Machine(std::string mealFile, std::string moneyFile, bool useColor, bool useTwoDimension);
+  Machine(std::string mealFile, std::string moneyFile, bool useColor);
   ~Machine();
 
   /*

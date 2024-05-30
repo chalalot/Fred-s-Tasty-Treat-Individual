@@ -7,7 +7,6 @@
  * Make sure free memory and close all files before exiting the program.
  **/
 bool useColor = false;
-bool useTwoDimension = false;
 
 int main(int argc, char **argv) {
   // Read arguments into an array of strings
@@ -19,12 +18,9 @@ int main(int argc, char **argv) {
       if (strArg == "--enableColor") {
         useColor = true;
       }
-      if (strArg == "--enable2D") {
-        useTwoDimension = true;
-      } 
     }
     
-    Machine *machine = new Machine(strArgs[1], strArgs[2], useColor, useTwoDimension);
+    Machine *machine = new Machine(strArgs[1], strArgs[2], useColor);
     machine->start();
     delete machine;
   } else {

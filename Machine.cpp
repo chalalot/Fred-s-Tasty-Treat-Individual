@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-Machine::Machine(std::string mealFileName, std::string moneyFileName, bool useColor, bool useTwoDimension) {
+Machine::Machine(std::string mealFileName, std::string moneyFileName, bool useColor) {
   DataManager *data = new DataManager(mealFileName, moneyFileName);
   this->data = data;
   if (useColor) {
