@@ -10,6 +10,11 @@ TwoDimensionLinkedList::TwoDimensionLinkedList() {
 
 TwoDimensionLinkedList::~TwoDimensionLinkedList()
 {
+  while (head != nullptr) {
+    LinkedList *temp = this->head;
+    this->head = this->head->next;
+    delete temp;
+  }
 }
 
 void TwoDimensionLinkedList::append(LinkedList *LinkedListNode) {
@@ -25,9 +30,6 @@ void TwoDimensionLinkedList::append(LinkedList *LinkedListNode) {
   LinkedListNode->next = nullptr;
 }
 
-void TwoDimensionLinkedList::remove(std::string id) {
-
-}
 
 bool TwoDimensionLinkedList::isDistinct(std::string name) {
     int count = 0;
